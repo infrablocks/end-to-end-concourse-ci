@@ -56,3 +56,27 @@ namespace :domain do
     end
   end
 end
+
+namespace :network do
+  RakeTerraform.define_command_tasks do |t|
+    t.argument_names = [:deployment_type, :deployment_label]
+
+    t.configuration_name = 'network'
+    t.source_directory = 'infra/network'
+    t.work_directory = 'build'
+
+    t.backend_config = lambda do |args|
+      configuration
+          .for_overrides(args)
+          .for_scope(role: 'network')
+          .backend_config
+    end
+
+    t.vars = lambda do |args|
+      configuration
+          .for_overrides(args)
+          .for_scope(role: 'network')
+          .vars
+    end
+  end
+end

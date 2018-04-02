@@ -10,3 +10,8 @@ domain_state_bucket_region: "%{hiera('region')}"
 domain_state_bucket_name: "%{hiera('state_bucket_name')}"
 domain_state_bucket_is_encrypted: "true"
 domain_state_key: "domain/deployments/%{hiera('deployment_identifier')}.tfstate"
+
+network_state_bucket_region: "%{hiera('region')}"
+network_state_bucket_name: "%{hiera('state_bucket_name')}"
+network_state_bucket_is_encrypted: "true"
+network_state_key: "network/deployments/%{hiera('deployment_identifier')}.tfstate"
