@@ -1,0 +1,11 @@
+---
+:backends:
+  - "overrides"
+  - "env"
+  - "yaml"
+:logger: "noop"
+:yaml:
+  :datadir: "config/infra"
+:hierarchy:
+  - "roles/%{role}"
+  - "constants"

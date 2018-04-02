@@ -1,0 +1,6 @@
+---
+region: "eu-west-1"
+component: "concourse-example"
+
+deployment_identifier: "%{hiera('deployment_type')}-%{hiera('deployment_label')}"
+state_bucket_name: "infrablocks-%{hiera('component')}-%{hiera('deployment_identifier')}"

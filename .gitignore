@@ -27,3 +27,6 @@ run/logs/
 .terraform
 *.tfstate
 *.tfstate.backup
+
+# State bucket state - remove this
+state/*
