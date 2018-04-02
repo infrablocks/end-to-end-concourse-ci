@@ -1,6 +1,12 @@
 ---
 region: "eu-west-1"
 component: "concourse-example"
-
 deployment_identifier: "%{hiera('deployment_type')}-%{hiera('deployment_label')}"
+domain_name: "infrablocks.io"
+
 state_bucket_name: "infrablocks-%{hiera('component')}-%{hiera('deployment_identifier')}"
+
+domain_state_bucket_region: "%{hiera('region')}"
+domain_state_bucket_name: "%{hiera('state_bucket_name')}"
+domain_state_bucket_is_encrypted: "true"
+domain_state_key: "domain/deployments/%{hiera('deployment_identifier')}.tfstate"
