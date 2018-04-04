@@ -1,7 +1,12 @@
 require 'confidante'
 require 'rake_terraform'
+require 'rake_docker'
+
+require_relative 'lib/terraform_output'
+require_relative 'lib/version'
 
 configuration = Confidante.configuration
+version = Version.from_file('build/version')
 
 RakeTerraform.define_installation_tasks(
     path: File.join(Dir.pwd, 'vendor', 'terraform'),
@@ -100,4 +105,75 @@ end
       end
     end
   end
+
+  namespace "#{role}_image" do
+    RakeDocker.define_image_tasks do |t|
+      t.argument_names = [:deployment_identifier]
+
+      t.image_name = "concourse-#{role}"
+      t.work_directory = 'build/images'
+
+      t.copy_spec = [
+          "src/concourse-#{role}/Dockerfile",
+          "src/concourse-#{role}/entrypoint.sh"
+      ]
+
+      t.create_spec = [
+          {content: version.to_s, to: 'VERSION'},
+          {content: version.to_docker_tag, to: 'TAG'}
+      ]
+
+      t.repository_name = "infrablocks/concourse-#{role}"
+
+      t.repository_url = lambda do |args|
+        backend_config =
+            configuration
+                .for_overrides(args)
+                .for_scope(role: "#{role}-repository")
+                .backend_config
+
+        TerraformOutput.for(
+            name: 'repository_url',
+            source_directory: "infra/image_repository",
+            work_directory: 'build',
+            backend_config: backend_config)
+      end
+
+      t.credentials = lambda do |args|
+        backend_config =
+            configuration
+                .for_overrides(args)
+                .for_scope(role: "#{role}-repository")
+                .backend_config
+
+        region =
+            configuration
+                .for_overrides(args)
+                .for_scope(role: "#{role}-repository")
+                .region
+
+        authentication_factory = RakeDocker::Authentication::ECR.new do |c|
+          c.region = region
+          c.registry_id = TerraformOutput.for(
+              name: 'registry_id',
+              source_directory: "infra/image_repository",
+              work_directory: 'build',
+              backend_config: backend_config)
+        end
+
+        authentication_factory.call
+      end
+
+      t.tags = [version.to_docker_tag, 'latest']
+    end
+
+    desc 'Build and push custom concourse image'
+    task :publish, [:deployment_identifier] do |_, args|
+      Rake::Task["#{role}_image:clean"].invoke(args.deployment_identifier)
+      Rake::Task["#{role}_image:build"].invoke(args.deployment_identifier)
+      Rake::Task["#{role}_image:tag"].invoke(args.deployment_identifier)
+      Rake::Task["#{role}_image:push"].invoke(args.deployment_identifier)
+    end
+  end
+
 end
