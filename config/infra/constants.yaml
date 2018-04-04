@@ -1,10 +1,12 @@
 ---
 region: "eu-west-1"
 component: "concourse-example"
-deployment_identifier: "%{hiera('deployment_type')}-%{hiera('deployment_label')}"
 domain_name: "infrablocks.io"
 
 state_bucket_name: "infrablocks-%{hiera('component')}-%{hiera('deployment_identifier')}"
+
+web_repository_name: "infrablocks/concourse-web"
+worker_repository_name: "infrablocks/concourse-worker"
 
 domain_state_bucket_region: "%{hiera('region')}"
 domain_state_bucket_name: "%{hiera('state_bucket_name')}"
@@ -15,3 +17,13 @@ network_state_bucket_region: "%{hiera('region')}"
 network_state_bucket_name: "%{hiera('state_bucket_name')}"
 network_state_bucket_is_encrypted: "true"
 network_state_key: "network/deployments/%{hiera('deployment_identifier')}.tfstate"
+
+web_image_repository_state_bucket_region: "%{hiera('region')}"
+web_image_repository_state_bucket_name: "%{hiera('state_bucket_name')}"
+web_image_repository_state_bucket_is_encrypted: "true"
+web_image_repository_state_key: "web-image-repository/deployments/%{hiera('deployment_identifier')}.tfstate"
+
+worker_image_repository_state_bucket_region: "%{hiera('region')}"
+worker_image_repository_state_bucket_name: "%{hiera('state_bucket_name')}"
+worker_image_repository_state_bucket_is_encrypted: "true"
+worker_image_repository_state_key: "worker-image-repository/deployments/%{hiera('deployment_identifier')}.tfstate"

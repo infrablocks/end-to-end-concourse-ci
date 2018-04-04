@@ -1,7 +1,7 @@
 ---
 vars:
   region: "%{hiera('region')}"
-  component: "%{hiera('network_component')}"
+  component: "%{hiera('component')}"
 
   deployment_identifier: "%{hiera('deployment_identifier')}"
 

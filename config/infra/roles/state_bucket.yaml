@@ -1,9 +1,6 @@
 ---
 vars:
   region: "%{hiera('region')}"
-
-  deployment_type: "%{hiera('deployment_type')}"
-  deployment_label: "%{hiera('deployment_label')}"
   deployment_identifier: "%{hiera('deployment_identifier')}"
 
   state_bucket_name: "%{hiera('state_bucket_name')}"

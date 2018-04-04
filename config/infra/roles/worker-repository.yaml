@@ -1,0 +1,10 @@
+---
+vars:
+  region: "%{hiera('region')}"
+  repository_name: "%{hiera('worker_repository_name')}"
+
+backend_config:
+  region: "%{hiera('worker_image_repository_state_bucket_region')}"
+  bucket: "%{hiera('worker_image_repository_state_bucket_name')}"
+  encrypt: "%{hiera('worker_image_repository_state_bucket_is_encrypted')}"
+  key: "%{hiera('worker_image_repository_state_key')}"
