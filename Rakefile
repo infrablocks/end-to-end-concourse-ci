@@ -175,5 +175,32 @@ end
       Rake::Task["#{role}_image:push"].invoke(args.deployment_identifier)
     end
   end
+end
 
+namespace :database do
+  RakeTerraform.define_command_tasks do |t|
+    t.argument_names = [:deployment_identifier]
+
+    t.configuration_name = 'database'
+    t.source_directory = 'infra/database'
+    t.work_directory = 'build'
+
+    t.backend_config = lambda do |args|
+      configuration
+          .for_overrides(args)
+          .for_scope(role: 'database')
+          .backend_config
+    end
+
+    t.vars = lambda do |args|
+      # Pretty awful configuration merging
+      database_config = YAML.load_file(
+          "config/secrets/database/#{args.deployment_identifier}.yaml")
+
+      configuration
+          .for_overrides(args.to_hash.merge(database_config))
+          .for_scope(role: 'database')
+          .vars
+    end
+  end
 end

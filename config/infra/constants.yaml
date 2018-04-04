@@ -3,6 +3,8 @@ region: "eu-west-1"
 component: "concourse-example"
 domain_name: "infrablocks.io"
 
+private_network_cidr: "10.0.0.0/16"
+
 state_bucket_name: "infrablocks-%{hiera('component')}-%{hiera('deployment_identifier')}"
 
 web_repository_name: "infrablocks/concourse-web"
@@ -27,3 +29,8 @@ worker_image_repository_state_bucket_region: "%{hiera('region')}"
 worker_image_repository_state_bucket_name: "%{hiera('state_bucket_name')}"
 worker_image_repository_state_bucket_is_encrypted: "true"
 worker_image_repository_state_key: "worker-image-repository/deployments/%{hiera('deployment_identifier')}.tfstate"
+
+database_state_bucket_region: "%{hiera('region')}"
+database_state_bucket_name: "%{hiera('state_bucket_name')}"
+database_state_bucket_is_encrypted: "true"
+database_state_key: "database/deployments/%{hiera('deployment_identifier')}.tfstate"
