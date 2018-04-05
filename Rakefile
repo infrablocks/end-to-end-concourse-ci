@@ -204,3 +204,28 @@ namespace :database do
     end
   end
 end
+
+namespace :cluster do
+  RakeTerraform.define_command_tasks do |t|
+    t.argument_names = [:deployment_identifier]
+
+    t.configuration_name = 'cluster'
+    t.source_directory = 'infra/cluster'
+    t.work_directory = 'build'
+
+    t.backend_config = lambda do |args|
+      configuration
+          .for_overrides(args)
+          .for_scope(
+              role: 'cluster')
+          .backend_config
+    end
+
+    t.vars = lambda do |args|
+      configuration
+          .for_overrides(args)
+          .for_scope(role: 'cluster')
+          .vars
+    end
+  end
+end

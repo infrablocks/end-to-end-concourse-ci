@@ -34,3 +34,8 @@ database_state_bucket_region: "%{hiera('region')}"
 database_state_bucket_name: "%{hiera('state_bucket_name')}"
 database_state_bucket_is_encrypted: "true"
 database_state_key: "database/deployments/%{hiera('deployment_identifier')}.tfstate"
+
+cluster_state_bucket_region: "%{hiera('region')}"
+cluster_state_bucket_name: "%{hiera('state_bucket_name')}"
+cluster_state_bucket_is_encrypted: "true"
+cluster_state_key: "cluster/deployments/%{hiera('deployment_identifier')}.tfstate"
