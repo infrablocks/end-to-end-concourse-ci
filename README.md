@@ -38,8 +38,9 @@ and `production-green`.
 
 ### Setting up your machine (optional)
 
-We use `go` to automate pre-install steps like installing Gems. To get Gem onto
-the PATH, we use direnv.
+We use `go` to automate pre-install steps like installing Gems. To get `go` onto
+the PATH, we use direnv. If you want to skip this step, use `rake` instead of
+`go` in all the commands below.
 
 ```bash
 $ brew install direnv
