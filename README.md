@@ -116,7 +116,7 @@ up `10.0.0.0/16`.
 $ go "network:provision[$DEPLOYMENT_IDENTIFIER]"
 ```
 
-### Publishing the Web Interface
+### Publishing the Docker images
 
 We want to deploy Concourse on ECS, so we need somewhere to put our Concourse
 Docker images, and then we need to deploy them.
