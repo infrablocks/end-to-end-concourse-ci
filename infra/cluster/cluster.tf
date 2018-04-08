@@ -28,16 +28,20 @@ module "ecs_cluster" {
   cluster_instance_docker_block_device_size = 30
 
   cluster_instance_amis = {
-    us-east-1 = "ami-9eb4b1e5"
-    us-east-2 = "ami-1c002379"
-    us-west-1 = "ami-4a2c192a"
-    us-west-2 = "ami-1d668865"
-    eu-west-1 = "ami-8fcc32f6"
-    eu-west-2 = "ami-cb1101af"
-    eu-central-1 = "ami-0460cb6b"
-    ap-northeast-1 = "ami-b743bed1"
-    ap-southeast-1 = "ami-9d1f7efe"
-    ap-southeast-2 = "ami-c1a6bda2"
-    ca-central-1 = "ami-b677c9d2"
+    us-east-1 = "ami-cb17d8b6"
+    us-east-2 = "ami-1b90a67e"
+    us-west-1 = "ami-9cbbaffc"
+    us-west-2 = "ami-05b5277d"
+    eu-west-1 = "ami-bfb5fec6"
+    eu-west-2 = "ami-a48d6bc3"
+    eu-west-3 = "ami-914afcec"
+    eu-central-1 = "ami-ac055447"
+    ap-northeast-1 = "ami-5add893c"
+    ap-northeast-2 = "ami-ba74d8d4"
+    ap-southeast-1 = "ami-acbcefd0"
+    ap-southeast-2 = "ami-4cc5072e"
+    ca-central-1 = "ami-a535b2c1"
+    ap-south-1 = "ami-2149114e"
+    sa-east-1 = "ami-d3bce9bf"
   }
 }

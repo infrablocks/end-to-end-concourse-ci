@@ -35,7 +35,7 @@ end
 
 namespace :domain do
   RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier]
+    t.argument_names = [:deployment_identifier, :domain_name]
 
     t.configuration_name = 'domain'
     t.source_directory = 'infra/domain'
@@ -225,6 +225,39 @@ namespace :cluster do
       configuration
           .for_overrides(args)
           .for_scope(role: 'cluster')
+          .vars
+    end
+  end
+end
+
+namespace :services do
+  RakeTerraform.define_command_tasks do |t|
+    t.argument_names = [:deployment_identifier]
+
+    t.configuration_name = 'concourse services'
+    t.source_directory = 'infra/services'
+    t.work_directory = 'build'
+
+    t.backend_config = lambda do |args|
+      configuration
+          .for_overrides(args)
+          .for_scope(role: 'services')
+          .backend_config
+    end
+
+    t.vars = lambda do |args|
+      concourse_config = YAML.load_file(
+          "config/secrets/concourse/web/#{args.deployment_identifier}.yaml")
+      database_config = YAML.load_file(
+          "config/secrets/database/#{args.deployment_identifier}.yaml")
+
+      configuration
+          .for_overrides(
+              args.to_hash
+                  .merge(database_config)
+                  .merge(concourse_config)
+                  .merge(version_number: version.to_docker_tag))
+          .for_scope(role: 'services')
           .vars
     end
   end

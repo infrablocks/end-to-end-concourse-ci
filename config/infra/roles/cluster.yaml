@@ -7,7 +7,7 @@ vars:
   private_network_cidr: "%{hiera('private_network_cidr')}"
 
   cluster_instance_ssh_public_key_path: "%{cwd}/config/secrets/cluster/ssh.public"
-  cluster_instance_type: "t2.micro"
+  cluster_instance_type: "t2.medium"
 
   network_state_bucket_region: "%{hiera('network_state_bucket_region')}"
   network_state_bucket_name: "%{hiera('network_state_bucket_name')}"
