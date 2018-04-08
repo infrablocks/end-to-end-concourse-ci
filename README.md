@@ -34,22 +34,132 @@ component. This could be tied to an environment, e.g. `development` or
 build flavours, so we could run A/B tests of services, e.g. `production-blue`
 and `production-green`.
 
-## Quick Deploy
+## Deployment
+
+### Setting up your machine (optional)
+
+We use `go` to automate pre-install steps like installing Gems. To get Gem onto
+the PATH, we use direnv.
 
 ```bash
+$ brew install direnv
 $ direnv allow
+```
+
+### Unlocking secrets
+
+It's not recommended, but for this example we keep secrets in the repository.
+
+We keep them locked up using `git-crypt`, but we've provided the key for you to
+unlock them.
+
+**If you want to deploy this for real, roll these secrets!**
+
+```bash
+$ brew install git-crypt
 $ git-crypt unlock ./git-crypt-key
+```
 
-$ DEPLOYMENT_IDENTIFIER=example
+### Choose a deployment identifier
 
+Because S3 buckets are global, if you deployed this all as-is you'd likely bump
+into others (including us!) for things like S3 buckets. So you need to change
+the deployment identifier.
+
+It can be anything you want. :-)
+
+``` bash
+$ export DEPLOYMENT_IDENTIFIER=example
+```
+
+### Provision the state bucket
+
+We need to store remote terraform state, so the first thing we do is build an S3
+bucket to keep it all in.
+
+```bash
 $ go "bucket:provision[$DEPLOYMENT_IDENTIFIER]"
-$ go "domain:provision[$DEPLOYMENT_IDENTIFIER]"
+```
+
+The state for this bucket is stored in the `state` folder in this repository.
+
+If you want to use this repository as part of a team environment, you need to go
+into the `.gitignore` file and delete the following:
+
+```
+# State bucket state - remove this
+state/*
+```
+
+### Provision the DNS zone
+
+In this example, we stand up a public and private zone so we can refer to our
+CI by name rather than by IP address.
+
+```bash
+$ go "domain:provision[$DEPLOYMENT_IDENTIFIER,example.com]"
+```
+
+### Setup a TLS Certificate
+
+You'll also need to go to the _Certificate Manager_ in AWS, and create a TLS
+certificate for your domain. If your domain is `example.com`, your certificate
+should cover `example.com` and `*.example.com`.
+
+### Provision the network
+
+We need to build a network to put our services into. At the moment it just takes
+up `10.0.0.0/16`.
+
+```bash
 $ go "network:provision[$DEPLOYMENT_IDENTIFIER]"
+```
+
+### Publishing the Web Interface
+
+We want to deploy Concourse on ECS, so we need somewhere to put our Concourse
+Docker images, and then we need to deploy them.
+
+#### Web Interface
+
+```
 $ go "web_image_repository:provision[$DEPLOYMENT_IDENTIFIER]"
-$ go "worker_image_repository:provision[$DEPLOYMENT_IDENTIFIER]"
 $ go "web_image:publish[$DEPLOYMENT_IDENTIFIER]"
+```
+
+#### Workers
+
+```
+$ go "worker_image_repository:provision[$DEPLOYMENT_IDENTIFIER]"
 $ go "worker_image:publish[$DEPLOYMENT_IDENTIFIER]"
+```
+
+### Provisioning the Cluster
+
+We need to provision some machines to run our ECS cluster on. In this example
+we spin up a single `t2.medium` box per availability zone. In this case, it's
+three.
+
+```
 $ go "cluster:provision[$DEPLOYMENT_IDENTIFIER]"
+```
+
+### Provisioning the Database
+
+Concourse needs some kind of SQL database to store build information in, so we
+provision a Postgres instance using RDS.
+
+```
 $ go "database:provision[$DEPLOYMENT_IDENTIFIER]"
-$ go "service:provision[$DEPLOYMENT_IDENTIFIER]"
+```
+
+### Provisioning the Services
+
+Once we have everything we need, now we just need to tell ECS to deploy the
+services. This will give us some ECS services, as well as a load balancer.
+
+Note: In this example, we've opened up the CI to `0.0.0.0/0`.
+
+```
+$ go "services:provision[$DEPLOYMENT_IDENTIFIER]"
 ```
