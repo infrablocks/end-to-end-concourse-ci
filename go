@@ -26,6 +26,11 @@ function run_rake() {
             missing_dependency="yes"
         fi
 
+        if ! type bundler >/dev/null 2>&1; then
+            echo "This codebase requires Bundler."
+            missing_dependency="yes"
+        fi
+
         if [[ "$missing_dependency" = "yes" ]]; then
             echo "Please install missing dependencies to continue."
             exit 1
@@ -51,7 +56,7 @@ function run_rake() {
             if [[ "$verbose" = "yes" ]]; then
                 bundle install
             else
-                bundle install --quiet
+                bundle install > /dev/null
             fi
         fi
     fi
