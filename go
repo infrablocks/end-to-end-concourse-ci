@@ -44,7 +44,7 @@ function run_rake() {
             if [[ "$verbose" = "yes" ]]; then
                 gem install --no-document bundler
             else
-                gem install --no-document bundler > /dev/null
+                gem install --no-document bundler --silent
             fi
 
             echo "Installing ruby dependencies."
