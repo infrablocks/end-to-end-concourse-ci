@@ -13,7 +13,7 @@ Backend:
 * s3:GetObject
 * s3:PutObject
 
-B-Social Service
+Concourse Service
 
 * s3:ListBucket
 * s3:GetObject
