@@ -90,6 +90,16 @@ resource "aws_security_group" "private_elb_security_group" {
     ]
   }
 
+  ingress {
+    from_port = "7799"
+    to_port = "7799"
+    protocol = "tcp"
+    cidr_blocks = [
+      "${data.terraform_remote_state.network.nat_public_ip}/32",
+      "${var.private_network_cidr}"
+    ]
+  }
+
   egress {
     from_port = 1
     to_port   = 65535
