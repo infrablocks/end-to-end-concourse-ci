@@ -93,6 +93,7 @@ data "template_file" "worker_env" {
 
   vars {
     tsa_host = "${data.template_file.web_url.rendered}"
+    ssh_port = "${var.ssh_port}"
 
     secrets_bucket = "${var.secrets_bucket_name}"
 
