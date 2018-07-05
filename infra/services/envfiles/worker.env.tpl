@@ -1,4 +1,4 @@
-CONCOURSE_TSA_HOST="${tsa_host}"
+CONCOURSE_TSA_HOST="${tsa_host}:${ssh_port}"
 CONCOURSE_WORK_DIR="/concourse-work-dir"
 CONCOURSE_BIND_IP="0.0.0.0"
 CONCOURSE_BAGGAGECLAIM_BIND_IP="0.0.0.0"
