@@ -13,6 +13,10 @@
       {
         "containerPort": 7788,
         "hostPort": 7788
+      },
+      {
+        "containerPort": 7799,
+        "hostPort": 7799
       }
     ],
     "environment": [
