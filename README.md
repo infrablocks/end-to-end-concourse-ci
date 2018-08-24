@@ -4,12 +4,12 @@ This is an end-to-end deployment of a single infrastructure component, in this
 case it's a ConcourseCI instance. We combine several tools to make this work:
 
 * Rake - for task management
-* Terraform - for infrastructure provisioning, heavily leaning on Infrablocks
+* Terraform - for infrastructure provisioning, heavily leaning on InfraBlocks
 * Confidante - for configuration management
 
 ## Concepts
 
-Infrablocks modules, and our configuration, contain some terms which need
+InfraBlocks modules, and our configuration, contain some terms which need
 explanation:
 
 ### Component
@@ -38,9 +38,9 @@ and `production-green`.
 
 ### Setting up your machine (optional)
 
-We use `go` to automate pre-install steps like installing Gems. To get `go` onto
-the PATH, we use direnv. If you want to skip this step, use `rake` instead of
-`go` in all the commands below.
+We use the `go` script to automate pre-install steps like installing Gems. To 
+get `go` onto the PATH, we use direnv. If you want to skip this step, use `rake` 
+instead of `go` in all the commands below.
 
 ```bash
 $ brew install direnv
