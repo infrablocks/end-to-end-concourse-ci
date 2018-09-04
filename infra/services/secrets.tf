@@ -1,14 +1,3 @@
-data "template_file" "database_url" {
-  template = "postgres://$${username}:$${password}@$${address}/$${database}"
-
-  vars {
-    username = "${var.database_username}"
-    password = "${var.database_password}"
-    database = "${var.database_name}"
-    address = "${data.terraform_remote_state.database.concourse_database_address}"
-  }
-}
-
 data "template_file" "web_url" {
   template = "$${component}-$${deployment_identifier}.$${domain_name}"
 
@@ -40,7 +29,10 @@ data "template_file" "web_env" {
     github_oauth_client_secret = "${var.github_oauth_client_secret}"
     github_organization = "${var.github_organization}"
 
-    database_url = "${data.template_file.database_url.rendered}"
+    database_host = "${data.terraform_remote_state.database.concourse_database_address}"
+    database_username = "${var.database_username}"
+    database_password = "${var.database_password}"
+    database_name = "${var.database_name}"
     external_url = "https://${data.template_file.web_url.rendered}"
     oauth_base_url = "https://${data.template_file.oauth_url.rendered}"
 
