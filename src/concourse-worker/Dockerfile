@@ -1,4 +1,4 @@
-FROM concourse/concourse:4.1.0
+FROM concourse/concourse:4.2.1
 
 # Install AWS CLI
 RUN apt-get update \
