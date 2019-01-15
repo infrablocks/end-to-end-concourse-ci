@@ -37,6 +37,12 @@ export CONCOURSE_TSA_WORKER_PRIVATE_KEY="/concourse-secrets/worker_key.private"
 # Expose additional config
 export CONCOURSE_PEER_IP="${SELF_IP}"
 
+retire_worker() {
+  /usr/local/bin/concourse retire-worker --name=$(hostname)
+}
+
+trap retire_worker EXIT
+
 # Starting
 echo "Starting concourse worker at IP: ${SELF_IP}"
 
