@@ -46,4 +46,4 @@ export CONCOURSE_TSA_PEER_IP="${SELF_IP}"
 echo "Starting concourse web at IP: ${SELF_IP}"
 
 # Delegate to concourse
-/usr/local/bin/dumb-init /usr/local/bin/concourse web
+/usr/bin/dumb-init /usr/local/concourse/bin/concourse web
