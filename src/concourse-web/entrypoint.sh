@@ -39,8 +39,7 @@ export CONCOURSE_TSA_HOST_KEY="/concourse-secrets/tsa_host_key.private"
 export CONCOURSE_TSA_AUTHORIZED_KEYS="/concourse-secrets/authorized_worker_keys"
 
 # Expose additional config
-export CONCOURSE_PEER_URL="http://${SELF_IP}:8080"
-export CONCOURSE_TSA_PEER_IP="${SELF_IP}"
+export CONCOURSE_PEER_ADDRESS="${SELF_IP}"
 
 # Starting
 echo "Starting concourse web at IP: ${SELF_IP}"
