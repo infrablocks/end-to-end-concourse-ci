@@ -1,3 +1,4 @@
+CONCOURSE_CLUSTER_NAME="Infrablocks Demo"
 CONCOURSE_ADD_LOCAL_USER="${http_basic_username}:${http_basic_password}"
 CONCOURSE_GITHUB_CLIENT_ID="${github_oauth_client_id}"
 CONCOURSE_GITHUB_CLIENT_SECRET="${github_oauth_client_secret}"
