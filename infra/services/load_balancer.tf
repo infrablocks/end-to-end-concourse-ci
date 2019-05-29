@@ -98,4 +98,11 @@ resource "aws_security_group" "private_elb_security_group" {
       "${var.private_network_cidr}"
     ]
   }
+
+  tags {
+    Name                  = "sg-elb-${var.component}-${var.deployment_identifier}"
+    Component             = "${var.component}"
+    DevelopmentIdentifier = "${var.deployment_identifier}"
+    Service               = "web"
+  }
 }
