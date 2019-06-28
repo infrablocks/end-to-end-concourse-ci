@@ -33,7 +33,7 @@ resource "aws_elb" "service_load_balancer" {
   connection_draining = true
   connection_draining_timeout = 60
 
-  tags {
+  tags = {
     Name = "elb-${var.component}-${var.deployment_identifier}"
     Component = "${var.component}"
     DevelopmentIdentifier = "${var.deployment_identifier}"
@@ -99,7 +99,7 @@ resource "aws_security_group" "private_elb_security_group" {
     ]
   }
 
-  tags {
+  tags = {
     Name                  = "sg-elb-${var.component}-${var.deployment_identifier}"
     Component             = "${var.component}"
     DevelopmentIdentifier = "${var.deployment_identifier}"

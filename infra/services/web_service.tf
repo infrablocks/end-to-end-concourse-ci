@@ -1,7 +1,7 @@
 data "template_file" "web_task_container_definitions" {
   template = "${file("${path.root}/container-definitions/web.json.tpl")}"
 
-  vars {
+  vars = {
     environment_object_path = "s3://${var.secrets_bucket_name}/${data.template_file.web_environment_object_key.rendered}"
   }
 }
@@ -44,7 +44,7 @@ resource "aws_iam_role_policy" "web_role_policy" {
 
 module "ecs_service" {
   source = "infrablocks/ecs-service/aws"
-  version = "0.1.12"
+  version = "0.5.0"
 
   region = "${var.region}"
   vpc_id = "${data.terraform_remote_state.network.vpc_id}"

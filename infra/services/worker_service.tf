@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_log_group" "service" {
   name = "/${var.component}/${var.deployment_identifier}/ecs-service/concourse-worker"
 
-  tags {
+  tags = {
     DeploymentIdentifier = "${var.deployment_identifier}"
     Component = "${var.component}"
     Service = "concourse-worker"
@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "service" {
 data "template_file" "worker_task_definition" {
   template = "${file("${path.root}/container-definitions/worker.json.tpl")}"
 
-  vars {
+  vars = {
     name = "concourse-worker"
     image = "${data.template_file.worker_image.rendered}"
     region = "${var.region}"

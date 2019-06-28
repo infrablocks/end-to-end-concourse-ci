@@ -1,7 +1,7 @@
 data "template_file" "web_url" {
   template = "$${component}-$${deployment_identifier}.$${domain_name}"
 
-  vars {
+  vars = {
     component = "${var.component}"
     deployment_identifier = "${var.deployment_identifier}"
     domain_name = "${data.terraform_remote_state.domain.domain_name}"
@@ -11,7 +11,7 @@ data "template_file" "web_url" {
 data "template_file" "oauth_url" {
   template = "$${component}-$${deployment_identifier}.$${domain_name}"
 
-  vars {
+  vars = {
     component = "${var.component}"
     deployment_identifier = "${var.deployment_identifier}"
     domain_name = "${data.terraform_remote_state.domain.domain_name}"
@@ -21,7 +21,7 @@ data "template_file" "oauth_url" {
 data "template_file" "web_env" {
   template = "${file("${path.root}/envfiles/web.env.tpl")}"
 
-  vars {
+  vars = {
     http_basic_username="${var.http_basic_username}"
     http_basic_password="${var.http_basic_password}"
 
@@ -83,7 +83,7 @@ resource "aws_s3_bucket_object" "web_env" {
 data "template_file" "worker_env" {
   template = "${file("${path.root}/envfiles/worker.env.tpl")}"
 
-  vars {
+  vars = {
     tsa_host = "${data.template_file.web_url.rendered}"
     ssh_port = "${var.ssh_port}"
 

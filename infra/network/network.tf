@@ -14,7 +14,7 @@ data "aws_ami" "amazon_linux" {
 
 module "base_network" {
   source = "infrablocks/base-networking/aws"
-  version = "0.3.0"
+  version = "0.6.0"
 
   component = "${var.component}"
   deployment_identifier = "${var.deployment_identifier}"

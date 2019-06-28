@@ -22,7 +22,7 @@ resource "aws_db_instance" "database" {
     "${aws_security_group.database.id}"
   ]
 
-  tags {
+  tags = {
     Name = "db-instance-${var.component}-${var.deployment_identifier}"
     Component = "${var.component}"
     DeploymentIdentifier = "${var.deployment_identifier}"
@@ -34,7 +34,7 @@ resource "aws_db_subnet_group" "database" {
   description = "Subnet group for Concourse PostgreSQL instance."
   subnet_ids = ["${split(",", data.terraform_remote_state.network.private_subnet_ids)}"]
 
-  tags {
+  tags = {
     Name = "db-subnet-group-${var.component}-${var.deployment_identifier}"
     Component = "${var.component}"
     DeploymentIdentifier = "${var.deployment_identifier}"
