@@ -44,10 +44,10 @@ resource "aws_iam_role_policy" "web_role_policy" {
 
 module "ecs_service" {
   source = "infrablocks/ecs-service/aws"
-  version = "0.5.0"
+  version = "1.0.0"
 
   region = "${var.region}"
-  vpc_id = "${data.terraform_remote_state.network.vpc_id}"
+  vpc_id = "${data.terraform_remote_state.network.outputs.vpc_id}"
 
   component = "${var.component}"
   deployment_identifier = "${var.deployment_identifier}"
@@ -66,6 +66,6 @@ module "ecs_service" {
   service_elb_name = "${aws_elb.service_load_balancer.name}"
   service_role = "${aws_iam_role.web_role.arn}"
 
-  ecs_cluster_id = "${data.terraform_remote_state.cluster.ecs_cluster_id}"
-  ecs_cluster_service_role_arn = "${data.terraform_remote_state.cluster.ecs_service_role_arn}"
+  ecs_cluster_id = "${data.terraform_remote_state.cluster.outputs.ecs_cluster_id}"
+  ecs_cluster_service_role_arn = "${data.terraform_remote_state.cluster.outputs.ecs_service_role_arn}"
 }

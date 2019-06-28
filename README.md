@@ -36,6 +36,8 @@ and `production-green`.
 
 ## Deployment
 
+This code requires terraform 0.12. If you want to use 0.11, use 'terraform011' branch.
+
 ### Setting up your machine (optional)
 
 We use the `go` script to automate pre-install steps like installing Gems. To 

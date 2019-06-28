@@ -32,7 +32,7 @@ resource "aws_db_instance" "database" {
 resource "aws_db_subnet_group" "database" {
   name = "${var.component}-${var.deployment_identifier}"
   description = "Subnet group for Concourse PostgreSQL instance."
-  subnet_ids = ["${split(",", data.terraform_remote_state.network.private_subnet_ids)}"]
+  subnet_ids = "${split(",", data.terraform_remote_state.network.outputs.private_subnet_ids)}"
 
   tags = {
     Name = "db-subnet-group-${var.component}-${var.deployment_identifier}"

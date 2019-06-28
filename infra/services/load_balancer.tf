@@ -1,5 +1,5 @@
 resource "aws_elb" "service_load_balancer" {
-  subnets = ["${split(",", data.terraform_remote_state.network.public_subnet_ids)}"]
+  subnets = "${split(",", data.terraform_remote_state.network.outputs.public_subnet_ids)}"
 
   security_groups = [
     "${aws_security_group.private_elb_security_group.id}"
@@ -43,7 +43,7 @@ resource "aws_elb" "service_load_balancer" {
 
 resource "aws_route53_record" "public_dns_record" {
   zone_id = "${data.terraform_remote_state.domain.public_zone_id}"
-  name = "${var.component}-${var.deployment_identifier}.${data.terraform_remote_state.domain.domain_name}"
+  name = "${var.component}-${var.deployment_identifier}.${data.terraform_remote_state.domain.outputs.domain_name}"
   type = "A"
 
   alias {
@@ -55,7 +55,7 @@ resource "aws_route53_record" "public_dns_record" {
 
 resource "aws_route53_record" "private_dns_record" {
   zone_id = "${data.terraform_remote_state.domain.private_zone_id}"
-  name = "${var.component}-${var.deployment_identifier}.${data.terraform_remote_state.domain.domain_name}"
+  name = "${var.component}-${var.deployment_identifier}.${data.terraform_remote_state.domain.outputs.domain_name}"
   type = "A"
 
   alias {
@@ -85,7 +85,7 @@ resource "aws_security_group" "private_elb_security_group" {
     to_port = "${var.ssh_port}"
     protocol = "tcp"
     cidr_blocks = [
-      "${data.terraform_remote_state.network.nat_public_ip}/32",
+      "${data.terraform_remote_state.network.outputs.nat_public_ip}/32",
       "${var.private_network_cidr}"
     ]
   }

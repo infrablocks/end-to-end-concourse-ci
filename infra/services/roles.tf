@@ -3,7 +3,7 @@ data "aws_iam_policy_document" "provisioning_assume_role_policy_contents" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      identifiers = ["${data.terraform_remote_state.cluster.ecs_cluster_instance_role_arn}"]
+      identifiers = ["${data.terraform_remote_state.cluster.outputs.ecs_cluster_instance_role_arn}"]
       type = "AWS"
     }
 

@@ -23,6 +23,6 @@ module "base_network" {
   region = "${var.region}"
   availability_zones = "${join(",", data.aws_availability_zones.all.names)}"
 
-  private_zone_id = "${data.terraform_remote_state.domain.private_zone_id}"
+  private_zone_id = "${data.terraform_remote_state.domain.outputs.private_zone_id}"
   include_lifecycle_events = "no"
 }

@@ -10,7 +10,7 @@ version = Version.from_file('build/version')
 
 RakeTerraform.define_installation_tasks(
     path: File.join(Dir.pwd, 'vendor', 'terraform'),
-    version: '0.11.3')
+    version: '0.12.0')
 
 namespace :bucket do
   RakeTerraform.define_command_tasks do |t|

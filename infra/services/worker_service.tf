@@ -69,7 +69,7 @@ resource "aws_ecs_task_definition" "worker_task_definition" {
 
 resource "aws_ecs_service" "service" {
   name = "concourse-worker"
-  cluster = "${data.terraform_remote_state.cluster.ecs_cluster_id}"
+  cluster = "${data.terraform_remote_state.cluster.outputs.ecs_cluster_id}"
   task_definition = "${aws_ecs_task_definition.worker_task_definition.arn}"
 
   desired_count = "${var.worker_desired_count}"

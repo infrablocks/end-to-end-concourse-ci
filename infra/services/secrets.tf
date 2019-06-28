@@ -4,7 +4,7 @@ data "template_file" "web_url" {
   vars = {
     component = "${var.component}"
     deployment_identifier = "${var.deployment_identifier}"
-    domain_name = "${data.terraform_remote_state.domain.domain_name}"
+    domain_name = "${data.terraform_remote_state.domain.outputs.domain_name}"
   }
 }
 
@@ -14,7 +14,7 @@ data "template_file" "oauth_url" {
   vars = {
     component = "${var.component}"
     deployment_identifier = "${var.deployment_identifier}"
-    domain_name = "${data.terraform_remote_state.domain.domain_name}"
+    domain_name = "${data.terraform_remote_state.domain.outputs.domain_name}"
   }
 }
 
@@ -29,7 +29,7 @@ data "template_file" "web_env" {
     github_oauth_client_secret = "${var.github_oauth_client_secret}"
     github_organization = "${var.github_organization}"
 
-    database_host = "${data.terraform_remote_state.database.concourse_database_address}"
+    database_host = "${data.terraform_remote_state.database.outputs.concourse_database_address}"
     database_username = "${var.database_username}"
     database_password = "${var.database_password}"
     database_name = "${var.database_name}"
