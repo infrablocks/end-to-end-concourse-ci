@@ -10,7 +10,7 @@ version = Version.from_file('build/version')
 
 RakeTerraform.define_installation_tasks(
     path: File.join(Dir.pwd, 'vendor', 'terraform'),
-    version: '0.12.0')
+    version: '0.12.17')
 
 namespace :bucket do
   RakeTerraform.define_command_tasks do |t|
@@ -27,7 +27,7 @@ namespace :bucket do
     t.vars = lambda do |args|
       configuration
           .for_overrides(args)
-          .for_scope(role: 'state_bucket')
+          .for_scope(role: 'state-bucket')
           .vars
     end
   end

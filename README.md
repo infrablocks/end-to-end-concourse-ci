@@ -36,7 +36,7 @@ and `production-green`.
 
 ## Deployment
 
-This code requires terraform 0.12. If you want to use 0.11, use 'terraform011' branch.
+This code requires terraform 0.12 or greater.
 
 ### Setting up your machine (optional)
 
