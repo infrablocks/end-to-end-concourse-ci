@@ -4,7 +4,7 @@ data "template_file" "cluster_instance_user_data_template" {
 
 module "ecs_cluster" {
   source = "infrablocks/ecs-cluster/aws"
-  version = "1.0.0"
+  version = "2.0.0"
 
   region = var.region
   vpc_id = data.terraform_remote_state.tooling_network.outputs.vpc_id
