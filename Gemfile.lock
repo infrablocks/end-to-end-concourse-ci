@@ -32,7 +32,7 @@ GEM
     evalhook (0.6.0)
       partialruby (~> 0.3)
       sexp_processor (~> 4.0)
-    excon (0.70.0)
+    excon (0.71.0)
     getsource (0.2.2)
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
