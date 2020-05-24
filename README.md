@@ -137,7 +137,7 @@ $ go "worker_image_repository:provision[$DEPLOYMENT_IDENTIFIER]"
 $ go "worker_image:publish[$DEPLOYMENT_IDENTIFIER]"
 ```
 
-### Provisioning the Cluster
+### Provision the Cluster
 
 We need to provision some machines to run our ECS cluster on. In this example
 we spin up a single `t2.medium` box per availability zone. In this case, it's
@@ -147,7 +147,7 @@ three.
 $ go "cluster:provision[$DEPLOYMENT_IDENTIFIER]"
 ```
 
-### Provisioning the Database
+### Provision the Database
 
 Concourse needs some kind of SQL database to store build information in, so we
 provision a Postgres instance using RDS.
@@ -156,7 +156,7 @@ provision a Postgres instance using RDS.
 $ go "database:provision[$DEPLOYMENT_IDENTIFIER]"
 ```
 
-### Provisioning the Services
+### Provision the Services
 
 Once we have everything we need, now we just need to tell ECS to deploy the
 services. This will give us some ECS services, as well as a load balancer.
