@@ -1,0 +1,6 @@
+---
+vars:
+  region: "%{hiera('region')}"
+  deployment_identifier: "%{deployment_identifier}"
+
+  storage_bucket_name: "%{hiera('storage_bucket_name')}"

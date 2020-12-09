@@ -1,0 +1,10 @@
+---
+vars:
+  region: "%{hiera('region')}"
+  domain_name: "%{hiera('domain_name')}"
+
+backend_config:
+  bucket: "%{hiera('domain_state_bucket_name')}"
+  key: "%{hiera('domain_state_key')}"
+  region: "%{hiera('domain_state_bucket_region')}"
+  encrypt: "%{hiera('domain_state_bucket_is_encrypted')}"

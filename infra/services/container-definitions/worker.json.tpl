@@ -7,26 +7,26 @@
     "privileged": true,
     "portMappings": [
       {
-        "containerPort": 7777,
-        "hostPort": 7777
+        "containerPort": ${garden_port},
+        "hostPort": ${garden_port}
       },
       {
-        "containerPort": 7788,
-        "hostPort": 7788
+        "containerPort": ${baggageclaim_port},
+        "hostPort": ${baggageclaim_port}
       },
       {
-        "containerPort": 7799,
-        "hostPort": 7799
+        "containerPort": ${gc_port},
+        "hostPort": ${gc_port}
       }
     ],
     "environment": [
-      { "name": "AWS_REGION", "value": "${region}" },
-      { "name": "ENVIRONMENT_OBJECT_PATH", "value": "${environment_object_path}" }
+      { "name": "AWS_S3_BUCKET_REGION", "value": "${region}" },
+      { "name": "AWS_S3_ENV_FILE_OBJECT_PATH", "value": "${environment_object_path}" }
     ],
     "mountPoints": [
       {
         "sourceVolume": "work-dir",
-        "containerPath": "/concourse-work-dir"
+        "containerPath": "/var/opt/concourse"
       }
     ],
     "logConfiguration": {

@@ -2,6 +2,8 @@ data "template_file" "web_task_container_definitions" {
   template = file("${path.root}/container-definitions/web.json.tpl")
 
   vars = {
+    http_port = var.http_port
+    ssh_port = var.ssh_port
     environment_object_path = "s3://${var.secrets_bucket_name}/${data.template_file.web_environment_object_key.rendered}"
   }
 }
@@ -44,7 +46,7 @@ resource "aws_iam_role_policy" "web_role_policy" {
 
 module "ecs_service" {
   source = "infrablocks/ecs-service/aws"
-  version = "1.0.0"
+  version = "3.2.0"
 
   region = var.region
   vpc_id = data.terraform_remote_state.network.outputs.vpc_id

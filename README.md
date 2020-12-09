@@ -81,7 +81,7 @@ We need to store remote terraform state, so the first thing we do is build an S3
 bucket to keep it all in.
 
 ```bash
-$ go "bucket:provision[$DEPLOYMENT_IDENTIFIER]"
+$ go "bootstrap:provision[$DEPLOYMENT_IDENTIFIER]"
 ```
 
 The state for this bucket is stored in the `state` folder in this repository.
@@ -105,9 +105,12 @@ $ go "domain:provision[$DEPLOYMENT_IDENTIFIER,example.com]"
 
 ### Setup a TLS Certificate
 
-You'll also need to go to the _Certificate Manager_ in AWS, and create a TLS
-certificate for your domain. If your domain is `example.com`, your certificate
-should cover `example.com` and `*.example.com`.
+We need a valid certificate so we can access the Concourse dashboard over 
+HTTPS.
+
+```bash
+$ go "certificate:provision[$DEPLOYMENT_IDENTIFIER]"
+```
 
 ### Provision the network
 

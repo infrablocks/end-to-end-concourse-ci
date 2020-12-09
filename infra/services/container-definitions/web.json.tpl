@@ -8,17 +8,17 @@
     "command": $${command},
     "portMappings": [
       {
-        "containerPort": 8080,
-        "hostPort": 8080
+        "containerPort": ${http_port},
+        "hostPort": ${http_port}
       },
       {
-        "containerPort": 2222,
-        "hostPort": 2222
+        "containerPort": ${ssh_port},
+        "hostPort": ${ssh_port}
       }
     ],
     "environment": [
-      { "name": "AWS_REGION", "value": "$${region}" },
-      { "name": "ENVIRONMENT_OBJECT_PATH", "value": "${environment_object_path}" }
+      { "name": "AWS_S3_BUCKET_REGION", "value": "$${region}" },
+      { "name": "AWS_S3_ENV_FILE_OBJECT_PATH", "value": "${environment_object_path}" }
     ],
     "logConfiguration": {
       "logDriver": "awslogs",

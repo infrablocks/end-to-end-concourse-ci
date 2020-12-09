@@ -1,0 +1,19 @@
+---
+vars:
+  region: "%{hiera('region')}"
+  component: "%{hiera('component')}"
+
+  deployment_identifier: "%{deployment_identifier}"
+
+  vpc_cidr: "%{hiera('private_network_cidr')}"
+
+  domain_state_bucket_name: "%{hiera('domain_state_bucket_name')}"
+  domain_state_key: "%{hiera('domain_state_key')}"
+  domain_state_bucket_region: "%{hiera('domain_state_bucket_region')}"
+  domain_state_bucket_is_encrypted: "%{hiera('domain_state_bucket_is_encrypted')}"
+
+backend_config:
+  bucket: "%{hiera('network_state_bucket_name')}"
+  key: "%{hiera('network_state_key')}"
+  region: "%{hiera('network_state_bucket_region')}"
+  encrypt: "%{hiera('network_state_bucket_is_encrypted')}"

@@ -15,6 +15,9 @@ data "template_file" "worker_task_definition" {
     name = "concourse-worker"
     image = data.template_file.worker_image.rendered
     region = var.region
+    garden_port = var.garden_port
+    baggageclaim_port = var.baggageclaim_port
+    gc_port = var.gc_port
     log_group = aws_cloudwatch_log_group.service.name
     environment_object_path = "s3://${var.secrets_bucket_name}/${data.template_file.worker_environment_object_key.rendered}"
   }

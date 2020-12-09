@@ -4,11 +4,11 @@ data "aws_vpc" "default" {
 
 module "dns_zones" {
   source = "infrablocks/dns-zones/aws"
-  version = "0.5.0"
+  version = "0.9.0"
 
-  domain_name = "${var.domain_name}"
-  private_domain_name = "${var.domain_name}"
+  domain_name = var.domain_name
+  private_domain_name = var.domain_name
 
-  private_zone_vpc_id = "${data.aws_vpc.default.id}"
-  private_zone_vpc_region = "${var.region}"
+  private_zone_vpc_id = data.aws_vpc.default.id
+  private_zone_vpc_region = var.region
 }

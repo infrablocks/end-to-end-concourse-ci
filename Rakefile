@@ -1,8 +1,9 @@
 require 'confidante'
+require 'ruby_terraform/output'
 require 'rake_terraform'
 require 'rake_docker'
+require 'rake_factory/kernel_extensions'
 
-require_relative 'lib/terraform_output'
 require_relative 'lib/version'
 
 configuration = Confidante.configuration
@@ -10,112 +11,107 @@ version = Version.from_file('build/version')
 
 RakeTerraform.define_installation_tasks(
     path: File.join(Dir.pwd, 'vendor', 'terraform'),
-    version: '0.12.17')
+    version: '0.13.5')
 
-namespace :bucket do
-  RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier]
+namespace :bootstrap do
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'bootstrap',
+      argument_names: [:deployment_identifier]
+  ) do |t, args|
+    configuration = configuration
+        .for_scope(args.to_h.merge(role: 'bootstrap'))
 
-    t.configuration_name = 'state bucket'
-    t.source_directory = 'infra/state_bucket'
+    t.source_directory = 'infra/bootstrap'
     t.work_directory = 'build'
 
-    t.state_file = lambda do |args|
-      File.join(Dir.pwd, "state/state_bucket/#{args.deployment_identifier}.tfstate")
-    end
-
-    t.vars = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'state-bucket')
-          .vars
-    end
+    t.state_file =
+        File.join(
+            Dir.pwd,
+            "state/bootstrap/#{args.deployment_identifier}.tfstate")
+    t.vars = configuration.vars
   end
 end
 
 namespace :domain do
-  RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier, :domain_name]
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'domain',
+      argument_names: [:deployment_identifier, :domain_name]
+  ) do |t, args|
+    configuration = configuration
+        .for_overrides(domain_name: args.domain_name)
+        .for_scope(
+            {deployment_identifier: args.deployment_identifier}
+                .merge(role: 'domain'))
 
-    t.configuration_name = 'domain'
     t.source_directory = 'infra/domain'
     t.work_directory = 'build'
 
-    t.backend_config = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'domain')
-          .backend_config
-    end
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
+  end
+end
 
-    t.vars = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'domain')
-          .vars
-    end
+namespace :certificate do
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'certificate',
+      argument_names: [:deployment_identifier]
+  ) do |t, args|
+    configuration = configuration
+        .for_scope(args.to_h.merge(role: 'certificate'))
+
+    t.source_directory = 'infra/certificate'
+    t.work_directory = 'build'
+
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
   end
 end
 
 namespace :network do
-  RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier]
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'network',
+      argument_names: [:deployment_identifier]
+  ) do |t, args|
+    configuration = configuration
+        .for_scope(args.to_h.merge(role: 'network'))
 
-    t.configuration_name = 'network'
     t.source_directory = 'infra/network'
     t.work_directory = 'build'
 
-    t.backend_config = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'network')
-          .backend_config
-    end
-
-    t.vars = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'network')
-          .vars
-    end
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
   end
 end
 
 [:web, :worker].each do |role|
   namespace "#{role}_image_repository" do
-    RakeTerraform.define_command_tasks do |t|
-      t.argument_names = [:deployment_identifier]
+    RakeTerraform.define_command_tasks(
+        configuration_name: "#{role} image repository",
+        argument_names: [:deployment_identifier]
+    ) do |t, args|
+      configuration = configuration
+          .for_scope(args.to_h.merge(role: "#{role}-repository"))
 
-      t.configuration_name = "#{role} image repository"
       t.source_directory = "infra/image_repository"
       t.work_directory = 'build'
 
-      t.backend_config = lambda do |args|
-        configuration
-            .for_overrides(args)
-            .for_scope(role: "#{role}-repository")
-            .backend_config
-      end
-
-      t.vars = lambda do |args|
-        configuration
-            .for_overrides(args)
-            .for_scope(role: "#{role}-repository")
-            .vars
-      end
+      t.backend_config = configuration.backend_config
+      t.vars = configuration.vars
     end
   end
 
   namespace "#{role}_image" do
-    RakeDocker.define_image_tasks do |t|
-      t.argument_names = [:deployment_identifier]
+    RakeDocker.define_image_tasks(
+        image_name: "concourse-#{role}",
+        argument_names: [:deployment_identifier]
+    ) do |t, args|
+      configuration = configuration
+          .for_scope(args.to_h.merge(role: "#{role}-repository"))
 
-      t.image_name = "concourse-#{role}"
       t.work_directory = 'build/images'
 
       t.copy_spec = [
-          "src/concourse-#{role}/Dockerfile",
-          "src/concourse-#{role}/entrypoint.sh"
+          "src/concourse-#{role}/Dockerfile"
       ]
 
       t.create_spec = [
@@ -123,142 +119,77 @@ end
           {content: version.to_docker_tag, to: 'TAG'}
       ]
 
-      t.repository_name = "infrablocks/concourse-#{role}"
+      t.repository_name = "infrablocks-examples/concourse-#{role}"
 
-      t.repository_url = lambda do |args|
-        backend_config =
-            configuration
-                .for_overrides(args)
-                .for_scope(role: "#{role}-repository")
-                .backend_config
-
-        TerraformOutput.for(
+      t.repository_url = dynamic do
+        RubyTerraform::Output.for(
             name: 'repository_url',
             source_directory: "infra/image_repository",
             work_directory: 'build',
-            backend_config: backend_config)
+            backend_config: configuration.backend_config)
       end
 
-      t.credentials = lambda do |args|
-        backend_config =
-            configuration
-                .for_overrides(args)
-                .for_scope(role: "#{role}-repository")
-                .backend_config
-
-        region =
-            configuration
-                .for_overrides(args)
-                .for_scope(role: "#{role}-repository")
-                .region
-
-        authentication_factory = RakeDocker::Authentication::ECR.new do |c|
-          c.region = region
-          c.registry_id = TerraformOutput.for(
+      t.credentials = dynamic do
+        RakeDocker::Authentication::ECR.new { |c|
+          c.region = configuration.region
+          c.registry_id = RubyTerraform::Output.for(
               name: 'registry_id',
               source_directory: "infra/image_repository",
               work_directory: 'build',
-              backend_config: backend_config)
-        end
-
-        authentication_factory.call
+              backend_config: configuration.backend_config)
+        }.call
       end
 
       t.tags = [version.to_docker_tag, 'latest']
-    end
-
-    desc 'Build and push custom concourse image'
-    task :publish, [:deployment_identifier] do |_, args|
-      Rake::Task["#{role}_image:clean"].invoke(args.deployment_identifier)
-      Rake::Task["#{role}_image:build"].invoke(args.deployment_identifier)
-      Rake::Task["#{role}_image:tag"].invoke(args.deployment_identifier)
-      Rake::Task["#{role}_image:push"].invoke(args.deployment_identifier)
     end
   end
 end
 
 namespace :database do
-  RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier]
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'database',
+      argument_names: [:deployment_identifier]
+  ) do |t, args|
+    configuration = configuration
+        .for_scope(args.to_h.merge(role: "database"))
 
-    t.configuration_name = 'database'
     t.source_directory = 'infra/database'
     t.work_directory = 'build'
 
-    t.backend_config = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'database')
-          .backend_config
-    end
-
-    t.vars = lambda do |args|
-      # Pretty awful configuration merging
-      database_config = YAML.load_file(
-          "config/secrets/database/#{args.deployment_identifier}.yaml")
-
-      configuration
-          .for_overrides(args.to_hash.merge(database_config))
-          .for_scope(role: 'database')
-          .vars
-    end
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
   end
 end
 
 namespace :cluster do
-  RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier]
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'cluster',
+      argument_names: [:deployment_identifier]
+  ) do |t, args|
+    configuration = configuration
+        .for_scope(args.to_h.merge(role: "cluster"))
 
-    t.configuration_name = 'cluster'
     t.source_directory = 'infra/cluster'
     t.work_directory = 'build'
 
-    t.backend_config = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(
-              role: 'cluster')
-          .backend_config
-    end
-
-    t.vars = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'cluster')
-          .vars
-    end
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
   end
 end
 
 namespace :services do
-  RakeTerraform.define_command_tasks do |t|
-    t.argument_names = [:deployment_identifier]
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'concourse services',
+      argument_names: [:deployment_identifier]
+  ) do |t, args|
+    configuration = configuration
+        .for_overrides(version_number: version.to_docker_tag)
+        .for_scope(args.to_h.merge(role: "services"))
 
-    t.configuration_name = 'concourse services'
     t.source_directory = 'infra/services'
     t.work_directory = 'build'
 
-    t.backend_config = lambda do |args|
-      configuration
-          .for_overrides(args)
-          .for_scope(role: 'services')
-          .backend_config
-    end
-
-    t.vars = lambda do |args|
-      concourse_config = YAML.load_file(
-          "config/secrets/concourse/web/#{args.deployment_identifier}.yaml")
-      database_config = YAML.load_file(
-          "config/secrets/database/#{args.deployment_identifier}.yaml")
-
-      configuration
-          .for_overrides(
-              args.to_hash
-                  .merge(database_config)
-                  .merge(concourse_config)
-                  .merge(version_number: version.to_docker_tag))
-          .for_scope(role: 'services')
-          .vars
-    end
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
   end
 end

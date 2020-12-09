@@ -1,0 +1,69 @@
+---
+vars:
+  region: "%{hiera('region')}"
+  component: "%{hiera('component')}"
+  deployment_identifier: "%{deployment_identifier}"
+
+  private_network_cidr: "%{hiera('private_network_cidr')}"
+  version_number: "%{hiera('version_number')}"
+
+  http_basic_username: "%{hiera('http_basic_username')}"
+  http_basic_password: "%{hiera('http_basic_password')}"
+
+  github_oauth_client_id: "%{hiera('github_oauth_client_id')}"
+  github_oauth_client_secret: "%{hiera('github_oauth_client_secret')}"
+  github_organization: "%{hiera('github_organization')}"
+
+  http_port: 8080
+  ssh_port: 2222
+
+  garden_port: 7777
+  baggageclaim_port: 7788
+  gc_port: 7799
+
+  web_desired_count: 3
+  worker_desired_count: 3
+
+  ci_gpg_public_key_path: "%{cwd}/config/secrets/concourse/keys/gpg.public.base64"
+
+  database_name: "%{hiera('database_name')}"
+  database_username: "%{hiera('database_username')}"
+  database_password: "%{hiera('database_password')}"
+
+  secrets_bucket_name: "%{hiera('secrets_bucket_name')}"
+
+  domain_state_bucket_name: "%{hiera('domain_state_bucket_name')}"
+  domain_state_key: "%{hiera('domain_state_key')}"
+  domain_state_bucket_region: "%{hiera('domain_state_bucket_region')}"
+  domain_state_bucket_is_encrypted: "%{hiera('domain_state_bucket_is_encrypted')}"
+
+  network_state_bucket_name: "%{hiera('network_state_bucket_name')}"
+  network_state_key: "%{hiera('network_state_key')}"
+  network_state_bucket_region: "%{hiera('network_state_bucket_region')}"
+  network_state_bucket_is_encrypted: "%{hiera('network_state_bucket_is_encrypted')}"
+
+  cluster_state_bucket_name: "%{hiera('cluster_state_bucket_name')}"
+  cluster_state_key: "%{hiera('cluster_state_key')}"
+  cluster_state_bucket_region: "%{hiera('cluster_state_bucket_region')}"
+  cluster_state_bucket_is_encrypted: "%{hiera('cluster_state_bucket_is_encrypted')}"
+
+  web_image_repository_state_bucket_name: "%{hiera('web_image_repository_state_bucket_name')}"
+  web_image_repository_state_key: "%{hiera('web_image_repository_state_key')}"
+  web_image_repository_state_bucket_region: "%{hiera('web_image_repository_state_bucket_region')}"
+  web_image_repository_state_bucket_is_encrypted: "%{hiera('web_image_repository_state_bucket_is_encrypted')}"
+
+  worker_image_repository_state_bucket_name: "%{hiera('worker_image_repository_state_bucket_name')}"
+  worker_image_repository_state_key: "%{hiera('worker_image_repository_state_key')}"
+  worker_image_repository_state_bucket_region: "%{hiera('worker_image_repository_state_bucket_region')}"
+  worker_image_repository_state_bucket_is_encrypted: "%{hiera('worker_image_repository_state_bucket_is_encrypted')}"
+
+  database_state_bucket_name: "%{hiera('database_state_bucket_name')}"
+  database_state_key: "%{hiera('database_state_key')}"
+  database_state_bucket_region: "%{hiera('database_state_bucket_region')}"
+  database_state_bucket_is_encrypted: "%{hiera('database_state_bucket_is_encrypted')}"
+
+backend_config:
+  bucket: "%{hiera('services_state_bucket_name')}"
+  key: "%{hiera('services_state_key')}"
+  region: "%{hiera('services_state_bucket_region')}"
+  encrypt: "%{hiera('services_state_bucket_is_encrypted')}"

@@ -5,7 +5,9 @@
   - "yaml"
 :logger: "noop"
 :yaml:
-  :datadir: "config/infra"
+  :datadir: "config"
 :hierarchy:
   - "roles/%{role}"
-  - "constants"
+  - "secrets/concourse/web/example"
+  - "secrets/database/example"
+  - "defaults"

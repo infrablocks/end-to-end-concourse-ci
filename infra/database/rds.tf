@@ -1,42 +1,21 @@
-resource "aws_db_instance" "database" {
-  identifier = "db-instance-${var.component}-${var.deployment_identifier}"
+module "database" {
+  source  = "infrablocks/rds-postgres/aws"
+  version = "1.5.0"
 
-  allocated_storage = 10
+  component = var.component
+  deployment_identifier = var.deployment_identifier
 
-  engine = "postgres"
-  engine_version = "9.5.10"
+  database_name = var.database_name
+  database_master_user = var.database_username
+  database_master_user_password = var.database_password
 
-  instance_class = "db.t2.large"
+  vpc_id = data.terraform_remote_state.network.outputs.vpc_id
+  private_subnet_ids = data.terraform_remote_state.network.outputs.private_subnet_ids
+  private_network_cidr = var.private_network_cidr
 
-  name = var.database_name
-  username = var.database_username
-  password = var.database_password
+  database_version = "11.9"
+  database_instance_class = "db.t2.large"
 
-  publicly_accessible = false
-  multi_az = false
-  storage_encrypted = false
-
-  db_subnet_group_name = aws_db_subnet_group.database.name
-
-  vpc_security_group_ids = [
-    aws_security_group.database.id
-  ]
-
-  tags = {
-    Name = "db-instance-${var.component}-${var.deployment_identifier}"
-    Component = var.component
-    DeploymentIdentifier = var.deployment_identifier
-  }
-}
-
-resource "aws_db_subnet_group" "database" {
-  name = "${var.component}-${var.deployment_identifier}"
-  description = "Subnet group for Concourse PostgreSQL instance."
-  subnet_ids = split(",", data.terraform_remote_state.network.outputs.private_subnet_ids)
-
-  tags = {
-    Name = "db-subnet-group-${var.component}-${var.deployment_identifier}"
-    Component = var.component
-    DeploymentIdentifier = var.deployment_identifier
-  }
+  use_encrypted_storage = "yes"
+  use_multiple_availability_zones = "yes"
 }

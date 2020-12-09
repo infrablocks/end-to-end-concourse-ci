@@ -1,3 +1,10 @@
+locals {
+  nat_gateway_cidrs = [
+    for ip in data.terraform_remote_state.network.outputs.nat_public_ips:
+          "${ip}/32"
+  ]
+}
+
 resource "aws_elb" "service_load_balancer" {
   subnets = data.terraform_remote_state.network.outputs.public_subnet_ids
 
@@ -42,7 +49,7 @@ resource "aws_elb" "service_load_balancer" {
 }
 
 resource "aws_route53_record" "public_dns_record" {
-  zone_id = data.terraform_remote_state.domain.public_zone_id
+  zone_id = data.terraform_remote_state.domain.outputs.public_zone_id
   name = "${var.component}-${var.deployment_identifier}.${data.terraform_remote_state.domain.outputs.domain_name}"
   type = "A"
 
@@ -54,7 +61,7 @@ resource "aws_route53_record" "public_dns_record" {
 }
 
 resource "aws_route53_record" "private_dns_record" {
-  zone_id = data.terraform_remote_state.domain.private_zone_id
+  zone_id = data.terraform_remote_state.domain.outputs.private_zone_id
   name = "${var.component}-${var.deployment_identifier}.${data.terraform_remote_state.domain.outputs.domain_name}"
   type = "A"
 
@@ -67,7 +74,7 @@ resource "aws_route53_record" "private_dns_record" {
 
 resource "aws_security_group" "private_elb_security_group" {
   name = "private-elb-${var.component}-${var.deployment_identifier}"
-  vpc_id = data.terraform_remote_state.network.vpc_id
+  vpc_id = data.terraform_remote_state.network.outputs.vpc_id
   description = "${var.component}-elb"
 
   ingress {
@@ -84,10 +91,9 @@ resource "aws_security_group" "private_elb_security_group" {
     from_port = var.ssh_port
     to_port = var.ssh_port
     protocol = "tcp"
-    cidr_blocks = [
-      "${data.terraform_remote_state.network.outputs.nat_public_ip}/32",
+    cidr_blocks = concat(local.nat_gateway_cidrs, [
       var.private_network_cidr
-    ]
+    ])
   }
 
   egress {

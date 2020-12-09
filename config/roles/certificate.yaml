@@ -1,0 +1,14 @@
+---
+vars:
+  region: "%{hiera('region')}"
+
+  domain_state_bucket_name: "%{hiera('domain_state_bucket_name')}"
+  domain_state_key: "%{hiera('domain_state_key')}"
+  domain_state_bucket_region: "%{hiera('domain_state_bucket_region')}"
+  domain_state_bucket_is_encrypted: "%{hiera('domain_state_bucket_is_encrypted')}"
+
+backend_config:
+  bucket: "%{hiera('certificate_state_bucket_name')}"
+  key: "%{hiera('certificate_state_key')}"
+  region: "%{hiera('certificate_state_bucket_region')}"
+  encrypt: "%{hiera('certificate_state_bucket_is_encrypted')}"
