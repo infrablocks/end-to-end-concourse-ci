@@ -1,79 +1,70 @@
 #!/usr/bin/env bash
 
-function run_rake() {
-    [ -n "$GO_DEBUG" ] && set -x
-    set -e
+[ -n "$GO_DEBUG" ] && set -x
+set -e
 
-    project_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-    verbose="no"
-    skip_checks="no"
-    skip_pre_flight="no"
-    offline="no"
+verbose="no"
+offline="no"
+skip_checks="no"
 
-    missing_dependency="no"
+missing_dependency="no"
 
-    [ -n "$GO_DEBUG" ] && verbose="yes"
-    [ -n "$GO_SKIP_CHECKS" ] && skip_checks="yes"
-    [ -n "$GO_SKIP_PRE_FLIGHT" ] && skip_pre_flight="yes"
-    [ -n "$GO_OFFLINE" ] && offline="yes"
+[ -n "$GO_DEBUG" ] && verbose="yes"
+[ -n "$GO_SKIP_CHECKS" ] && skip_checks="yes"
+[ -n "$GO_OFFLINE" ] && offline="yes"
 
-    if [[ "$skip_checks" = "no" ]]; then
-        echo "Checking for system dependencies."
-        ruby_version="$(cat "$project_dir"/.ruby-version)"
-        if ! type ruby >/dev/null 2>&1 || ! ruby -v | grep -q "$ruby_version"; then
-            echo "This codebase requires Ruby $ruby_version."
-            missing_dependency="yes"
-        fi
+function loose_version() {
+  local version="$1"
 
-        if [[ "$missing_dependency" = "yes" ]]; then
-            echo "Please install missing dependencies to continue."
-            exit 1
-        fi
+  IFS="." read -r -a version_parts <<<"$version"
 
-        echo "All system dependencies present. Continuing."
-    fi
-
-    if [[ "$skip_pre_flight" = "no" ]]; then
-        echo "Installing git hooks."
-        set +e && rm .git/hooks/prepare-commit-msg >/dev/null 2>&1 && set -e
-        cp scripts/git/prepare-commit-msg .git/hooks/
-
-        if [[ "$offline" = "no" ]]; then
-            echo "Installing bundler."
-            if [[ "$verbose" = "yes" ]]; then
-                gem install --no-document bundler
-            else
-                gem install --no-document bundler --silent
-            fi
-
-            echo "Installing ruby dependencies."
-            if [[ "$verbose" = "yes" ]]; then
-                bundle install
-            else
-                bundle install --quiet
-            fi
-        fi
-    fi
-
-    echo "Starting rake."
-    if [[ "$verbose" = "yes" ]]; then
-        time bundle exec rake --verbose "$@"
-    else
-        time bundle exec rake "$@"
-    fi
+  echo "${version_parts[0]}.${version_parts[1]}"
 }
 
-usage=" USAGE: go <rake command>"
+ruby_full_version="$(cat "$project_dir"/.ruby-version)"
+ruby_loose_version="$(loose_version "$ruby_full_version")"
 
-COMMAND="$@"
+if [[ "$skip_checks" == "no" ]]; then
+echo "Checking for system dependencies."
+  if ! type ruby >/dev/null 2>&1 || ! ruby -v | grep -q "$ruby_loose_version"; then
+    echo "This codebase requires Ruby $ruby_loose_version."
+    missing_dependency="yes"
+  fi
 
-bold=`tput bold`
-green=`tput setaf 2`
-reset=`tput sgr0`
+  if ! type bundler >/dev/null 2>&1; then
+    echo "This codebase requires Bundler."
+    missing_dependency="yes"
+  fi
 
-echo
-echo ${bold}${green}">>> Running command: [ go $COMMAND ]"${reset}
-echo
+  if [[ "$missing_dependency" = "yes" ]]; then
+    echo "Please install missing dependencies to continue."
+    exit 1
+  fi
 
-run_rake $COMMAND
+  echo "All system dependencies present. Continuing."
+fi
+
+if [[ "$offline" == "no" ]]; then
+  echo "Installing bundler."
+  if [[ "$verbose" == "yes" ]]; then
+    gem install --no-document bundler
+  else
+    gem install --no-document bundler >/dev/null
+  fi
+
+  echo "Installing ruby dependencies."
+  if [[ "$verbose" == "yes" ]]; then
+    bundle install
+  else
+    bundle install >/dev/null
+  fi
+fi
+
+echo "Starting rake."
+if [[ "$verbose" == "yes" ]]; then
+  time bundle exec rake --verbose "$@"
+else
+  time bundle exec rake "$@"
+fi

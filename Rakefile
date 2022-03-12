@@ -11,7 +11,7 @@ version = Version.from_file('build/version')
 
 RakeTerraform.define_installation_tasks(
     path: File.join(Dir.pwd, 'vendor', 'terraform'),
-    version: '0.13.5')
+    version: '1.1.7')
 
 namespace :bootstrap do
   RakeTerraform.define_command_tasks(
