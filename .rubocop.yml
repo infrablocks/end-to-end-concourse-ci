@@ -1,0 +1,20 @@
+require:
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+
+Layout/LineLength:
+  Max: 80
+
+Metrics/BlockLength:
+  AllowedMethods:
+    - describe
+    - context
+    - shared_examples
+    - it
+  Exclude:
+    - Rakefile
+
+Style/Documentation:
+  Enabled: false
